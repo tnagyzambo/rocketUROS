@@ -5,7 +5,7 @@
 #include <rcl/error_handling.h>
 #include <rclc/rclc.h>
 #include <rclc/executor.h>
-#include <portenta_eth_transport.cpp>
+#include <portenta_eth_transport.h>
 
 #include <std_msgs/msg/int32.h>
 
@@ -18,6 +18,8 @@ rcl_node_t node;
 rcl_timer_t timer;
 
 #define LED_PIN 13
+#define AGENT_IP "192.168.1.176"
+#define AGENT_PORT 8888
 
 #define RCCHECK(fn)              \
   {                              \
@@ -56,7 +58,7 @@ void timer_callback(rcl_timer_t *timer, int64_t last_call_time)
 
 void setup()
 {
-  set_microros_transports();
+  set_MachineControl_eth_transports(AGENT_IP, AGENT_PORT);
 
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, HIGH);
