@@ -5,6 +5,7 @@
 #include <rcl/error_handling.h>
 #include <rclc/rclc.h>
 #include <rclc/executor.h>
+#include <portenta_eth_transport.cpp>
 
 #include <std_msgs/msg/int32.h>
 
