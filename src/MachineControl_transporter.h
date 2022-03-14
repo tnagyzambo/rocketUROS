@@ -17,26 +17,27 @@ extern "C"
     ///struct micro_ros_agent_locator * locator = (struct micro_ros_agent_locator *) transport->args;
     //udp_client.begin(locator->port);
 
-    agent_locator locator = locator;
-    locator.net.connect(); 
-    socket.open(&locator.net);
-    socket.connect(locator.addr);
+    struct agent_locator * locator = (struct agent_locator *) transport->args;
+    locator->net.connect();
+    socket.open(&locator->net);
+    socket.connect(locator->addr);
 
     return true;
   }
 
   bool MachineControl_eth_transport_close(struct uxrCustomTransport * transport)
   {
-    agent_locator locator = locator;
+    struct agent_locator * locator = (struct agent_locator *) transport->args;
     socket.close();
-    locator.net.disconnect();
+    locator->net.disconnect();
     return true;
   }
 
   size_t MachineControl_eth_transport_write(struct uxrCustomTransport * transport, const uint8_t *buf, size_t len, uint8_t *errcode)
   {
     (void)errcode;
-    struct micro_ros_agent_locator * locator = (struct micro_ros_agent_locator *) transport->args;
+    (void)transport;
+    //struct agent_locator * locator = (struct agent_locator *) transport->args;
 
     //Unsure if I need to do the begin and end and flush stuff. The example does not do this.
     auto sent = socket.send(buf, len);
