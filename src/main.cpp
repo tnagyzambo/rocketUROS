@@ -22,7 +22,7 @@ rcl_node_t node;
 rcl_timer_t timer;
 
 #define LED_PIN 13
-#define AGENT_IP "192.168.1.176"
+#define AGENT_IP "10.42.0.1"
 #define AGENT_PORT 8888
 
 #define RCCHECK(fn)              \
@@ -60,80 +60,84 @@ void timer_callback(rcl_timer_t *timer, int64_t last_call_time)
   }
 }
 
-byte ip[] = { 10, 0, 0, 177 };
+byte ip[] = { 10, 42, 0, 2 }; //porenta IP
 byte server[] = { 64, 233, 187, 99 }; // Google
 const char* mystring = "localhost";
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 void setup(){
 
-  Ethernet.begin(mac);
+  Ethernet.begin(mac, ip);
   Serial.begin(9600);
 
-  delay(1000);
+  delay(2000);
 
   Serial.println("connecting...");
 
-  if (client.connect(mystring, 8080)) {
-    Serial.println("connected");
-    //client.println("GET /search?q=arduino HTTP/1.0");
-    client.println();
-  } else {
-    Serial.println("connection failed");
-  }
 
-  // set_MachineControl_eth_transports(AGENT_IP, AGENT_PORT);
-  // //set_microros_transports();
 
-  // pinMode(LED_PIN, OUTPUT);
-  // digitalWrite(LED_PIN, HIGH);
+  // if (client.connect(AGENT_IP, 8080)) {
+  //   Serial.println("connected");
+  //   //client.println("GET /search?q=arduino HTTP/1.0");
+  //   client.println();
+  // } else {
+  //   Serial.println("connection failed");
+  // }
 
-  // delay(2000);
+  set_MachineControl_eth_transports(AGENT_IP, AGENT_PORT);
+  
+  Serial.println("Passed set up");
+  //set_microros_transports();
 
-  // allocator = rcl_get_default_allocator();
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, HIGH);
 
-  // // create init_options
-  // RCCHECK(rclc_support_init(&support, 0, NULL, &allocator));
+  delay(2000);
 
-  // // create node
-  // RCCHECK(rclc_node_init_default(&node, "micro_ros_arduino_node", "", &support));
+  allocator = rcl_get_default_allocator();
 
-  // // create publisher
-  // RCCHECK(rclc_publisher_init_default(
-  //     &publisher,
-  //     &node,
-  //     ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Int32),
-  //     "micro_ros_arduino_node_publisher"));
+  // create init_options
+  RCCHECK(rclc_support_init(&support, 0, NULL, &allocator));
 
-  // // create timer,
-  // const unsigned int timer_timeout = 1000;
-  // RCCHECK(rclc_timer_init_default(
-  //     &timer,
-  //     &support,
-  //     RCL_MS_TO_NS(timer_timeout),
-  //     timer_callback));
+  // create node
+  RCCHECK(rclc_node_init_default(&node, "micro_ros_arduino_node", "", &support));
 
-  // // create executor
-  // RCCHECK(rclc_executor_init(&executor, &support.context, 1, &allocator));
-  // RCCHECK(rclc_executor_add_timer(&executor, &timer));
+  // create publisher
+  RCCHECK(rclc_publisher_init_default(
+      &publisher,
+      &node,
+      ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Int32),
+      "micro_ros_arduino_node_publisher"));
 
-  // msg.data = 0;
+  // create timer,
+  const unsigned int timer_timeout = 1000;
+  RCCHECK(rclc_timer_init_default(
+      &timer,
+      &support,
+      RCL_MS_TO_NS(timer_timeout),
+      timer_callback));
+
+  // create executor
+  RCCHECK(rclc_executor_init(&executor, &support.context, 1, &allocator));
+  RCCHECK(rclc_executor_add_timer(&executor, &timer));
+
+  msg.data = 0;
 }
 
 void loop()
 {
-  //delay(100);
-  //RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100)));
+  delay(100);
+  RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100)));
 
-  if (client.available()) {
-    char c = client.read();
-    Serial.print(c);
-  }
+  // if (client.available()) {
+  //   char c = client.read();
+  //   Serial.print(c);
+  // }
 
-  if (!client.connected()) {
-    Serial.println();
-    Serial.println("disconnecting.");
-    client.stop();
-    for(;;)
-      ;
-  }
+  // if (!client.connected()) {
+  //   Serial.println();
+  //   Serial.println("disconnecting.");
+  //   client.stop();
+  //   for(;;)
+  //     ;
+  // }
 }
