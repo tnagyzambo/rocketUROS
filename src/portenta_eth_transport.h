@@ -3,25 +3,12 @@
 #include <Arduino.h>
 #include <micro_ros_arduino.h>
 
-#include "EthernetInterface.h"
-
 #include "MachineControl_transporter.h"
-
-//I am following the wifi example from  https://github.com/arduino-libraries/Arduino_MachineControl
-//Also following a wifi_transport example.
-
-
 
 extern "C" bool MachineControl_eth_transport_open(struct uxrCustomTransport * transport);
 extern "C" bool MachineControl_eth_transport_close(struct uxrCustomTransport * transport);
 extern "C" size_t MachineControl_eth_transport_write(struct uxrCustomTransport* transport, const uint8_t * buf, size_t len, uint8_t * err);
 extern "C" size_t MachineControl_eth_transport_read(struct uxrCustomTransport* transport, uint8_t* buf, size_t len, int timeout, uint8_t* err);
-
-// struct micro_ros_agent_locator {
-// 	IPAddress address;
-// 	int port;
-// };
-
 
 static inline void set_MachineControl_eth_transports(char * agent_ip, uint agent_port){
 

@@ -69,29 +69,15 @@ void setup(){
   Ethernet.begin(mac, ip);
   Serial.begin(9600);
 
-  delay(2000);
-
-  Serial.println("connecting...");
-
-
-
-  // if (client.connect(AGENT_IP, 8080)) {
-  //   Serial.println("connected");
-  //   //client.println("GET /search?q=arduino HTTP/1.0");
-  //   client.println();
-  // } else {
-  //   Serial.println("connection failed");
-  // }
+  delay(500);
 
   set_MachineControl_eth_transports(AGENT_IP, AGENT_PORT);
-  
-  Serial.println("Passed set up");
-  //set_microros_transports();
+
 
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, HIGH);
 
-  delay(2000);
+  delay(2000); //do we need a full 2 second delay?
 
   allocator = rcl_get_default_allocator();
 
@@ -128,16 +114,4 @@ void loop()
   delay(100);
   RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100)));
 
-  // if (client.available()) {
-  //   char c = client.read();
-  //   Serial.print(c);
-  // }
-
-  // if (!client.connected()) {
-  //   Serial.println();
-  //   Serial.println("disconnecting.");
-  //   client.stop();
-  //   for(;;)
-  //     ;
-  // }
 }
