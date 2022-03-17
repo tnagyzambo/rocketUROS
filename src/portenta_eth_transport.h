@@ -10,7 +10,9 @@ extern "C" bool MachineControl_eth_transport_close(struct uxrCustomTransport * t
 extern "C" size_t MachineControl_eth_transport_write(struct uxrCustomTransport* transport, const uint8_t * buf, size_t len, uint8_t * err);
 extern "C" size_t MachineControl_eth_transport_read(struct uxrCustomTransport* transport, uint8_t* buf, size_t len, int timeout, uint8_t* err);
 
-static inline void set_MachineControl_eth_transports(char * agent_ip, uint agent_port){
+static inline void set_MachineControl_eth_transports(byte* mac, byte* localIP, char * agent_ip, uint agent_port){
+  //TODO add type safety for mac and IP
+  Ethernet.begin(mac, localIP);
 
 	static struct micro_ros_agent_locator locator;
 	locator.address.fromString(agent_ip);

@@ -22,8 +22,12 @@ rcl_node_t node;
 rcl_timer_t timer;
 
 #define LED_PIN 13
-#define AGENT_IP "10.42.0.1"
-#define AGENT_PORT 8888
+
+//Setup things that are required for communication
+#define AGENT_IP "10.42.0.1" //IP of your ethernet adapter
+#define AGENT_PORT 8888 //I think this is used to get to the docker container. I am not sure
+byte ip[] = { 10, 42, 0, 2 }; //portenta IP
+byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED }; 
 
 #define RCCHECK(fn)              \
   {                              \
@@ -60,18 +64,13 @@ void timer_callback(rcl_timer_t *timer, int64_t last_call_time)
   }
 }
 
-byte ip[] = { 10, 42, 0, 2 }; //porenta IP
-byte server[] = { 64, 233, 187, 99 }; // Google
-const char* mystring = "localhost";
-byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+
 void setup(){
-
-  Ethernet.begin(mac, ip);
+  
   Serial.begin(9600);
-
   delay(500);
 
-  set_MachineControl_eth_transports(AGENT_IP, AGENT_PORT);
+  set_MachineControl_eth_transports(mac, ip, AGENT_IP, AGENT_PORT);
 
 
   pinMode(LED_PIN, OUTPUT);
@@ -113,5 +112,4 @@ void loop()
 {
   delay(100);
   RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100)));
-
 }
